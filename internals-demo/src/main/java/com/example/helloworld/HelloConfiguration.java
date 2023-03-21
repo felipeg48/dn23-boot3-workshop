@@ -17,8 +17,24 @@ class HelloConfiguration {
 	}
 
 	@Bean
-	HelloNameProvider nameProvider() {
-		return new HelloNameProvider();
+	static HelloPostProcessor postProcessor() {
+		return new HelloPostProcessor();
+	}
+
+	static class HelloPostProcessor implements BeanDefinitionRegistryPostProcessor {
+
+		@Override
+		public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+			RootBeanDefinition beanDefinition = new RootBeanDefinition(HelloNameProvider.class);
+			beanDefinition.setInstanceSupplier(HelloNameProvider::new);
+			registry.registerBeanDefinition("nameProvider", beanDefinition);
+		}
+
+		@Override
+		public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+			// noop
+		}
+
 	}
 
 }
